@@ -6,7 +6,7 @@
 // snoozing, the most universal morning failure, reframed as a workout.
 // It is one sentence, plain text, and well under 200 characters.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const LINE =
   "I set my alarm for 6am to start my new healthy routine, then snoozed it nine times and called that interval training.";
@@ -38,3 +38,11 @@ const OUTPUT_PATH = "/output/entry.txt";
 
 mkdirSync("/output", { recursive: true });
 writeFileSync(OUTPUT_PATH, LINE + "\n", "utf8");
+
+// Write verification: read the file back and confirm its bytes match
+// exactly what was written, so a partial or failed write is caught
+// instead of silently shipping a broken entry.
+const written = readFileSync(OUTPUT_PATH, "utf8");
+if (written !== LINE + "\n") {
+  throw new Error("written entry does not match the expected line");
+}
